@@ -309,7 +309,7 @@ class Agent(client.Agent):
 
     def request(self, method, uri, headers, bodyProducer=None):
         for key, values in headers.getAllRawHeaders():
-            fixed_values = [re_sub(rexp['w2t'], b'http://\2.onion', value) for value in values]
+            fixed_values = [re_sub(rexp['w2t'], b'http://\\2.onion', value) for value in values]
             headers.setRawHeaders(key, fixed_values)
 
         return client.Agent.request(self, method, uri, headers, bodyProducer)
@@ -488,11 +488,11 @@ class T2WRequest(http.Request):
 
             if config.avoid_rewriting_visible_content and self.obj.special_content == 'HTML':
                 data = re_sub(rexp['html_t2w'],
-                              b'\1\2' + self.proto + b'\3.' + self.var['basehost'].encode('utf-8') + self.port.encode(
-                                  'utf-8') + b'\4', data)
+                              b'\\1\\2' + self.proto + b'\\3.' + self.var['basehost'].encode('utf-8') + self.port.encode(
+                                  'utf-8') + b'\\4', data)
             else:
                 data = re_sub(rexp['t2w'],
-                              self.proto + b'\2.' + self.var['basehost'].encode('utf-8') + self.port.encode('utf-8'),
+                              self.proto + b'\\2.' + self.var['basehost'].encode('utf-8') + self.port.encode('utf-8'),
                               data)
 
         if len(data) >= config.bufsize * 2:
@@ -516,11 +516,11 @@ class T2WRequest(http.Request):
 
             if config.avoid_rewriting_visible_content and self.obj.special_content == 'HTML':
                 data = re_sub(rexp['html_t2w'],
-                              b'\1\2' + self.proto + b'\3.' + self.var['basehost'].encode('utf-8') + self.port.encode(
-                                  'utf-8') + b'\4', data)
+                              b'\\1\\2' + self.proto + b'\\3.' + self.var['basehost'].encode('utf-8') + self.port.encode(
+                                  'utf-8') + b'\\4', data)
             else:
                 data = re_sub(rexp['t2w'],
-                              self.proto + b'\2.' + self.var['basehost'].encode('utf-8') + self.port.encode('utf-8'),
+                              self.proto + b'\\2.' + self.var['basehost'].encode('utf-8') + self.port.encode('utf-8'),
                               data)
 
         self.forwardData(self.handleCleartextForwardPart(data, True), True)
@@ -987,12 +987,12 @@ class T2WRequest(http.Request):
             return
 
         elif keyLower == 'set-cookie':
-            values = [re_sub(rexp['set_cookie_t2w'], b'domain=\1.' + config.basehost.encode('utf-8') + b'\2', x) for x
+            values = [re_sub(rexp['set_cookie_t2w'], b'domain=\\1.' + config.basehost.encode('utf-8') + b'\\2', x) for x
                       in values]
 
         else:
             values = [
-                re_sub(rexp['t2w'], self.proto + b'\2.' + config.basehost.encode('utf-8') + self.port.encode('utf-8'),
+                re_sub(rexp['t2w'], self.proto + b'\\2.' + config.basehost.encode('utf-8') + self.port.encode('utf-8'),
                        x) for x in values]
 
         self.responseHeaders.setRawHeaders(key, values)
